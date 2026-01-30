@@ -46,7 +46,7 @@
     }
 
     const PROMPT_LIST = splitPromptList(PROMPT);
-    const VIDEO_COUNT_PER_IMAGE = 2;
+    const VIDEO_COUNT_PER_IMAGE = 3;
 
     let IMAGE_QUEUE = [];
     let CURRENT_IMAGE_INDEX = 0;
@@ -375,3 +375,4 @@
     document.body.appendChild(btn);
 
 })();
+
