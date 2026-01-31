@@ -36,7 +36,7 @@
 
                 Chuyển động camera làm nổi bật tỷ lệ của bộ trang phục trong khi vẫn giữ nguyên góc nhìn qua gương và giữ đúng chi tiết trang phục cô gái đang mặc. Tuyệt đối không được lỗi tay và không được lỗi chân. Lấy lại góc quay toàn cảnh gương mà không thêm bất kì chi tiết trang phục nào ngoài bức ảnh, tạo dáng tự nhiên trong khi cầm điện thoại, tay cầm điện thoại vẫn luôn che mặt cô gái, tay còn lại có một số cử chỉ như vuốt mái tóc, sau đó đưa tay ra trước bụng một cách thanh lịch, sau đó tay vuốt dọc để xuôi xuống ở tư thế bình thường, thêm một chút chuyển động chậm (slow motion) để tạo nét thanh lịch, tuyệt đối không thay đổi chi tiết trang phục. Tuyệt đối không làm thay đổi chi tiết trang phục như trong ảnh mẫu.
 
-                Chuyển động camera làm nổi bật tỷ lệ của bộ trang phục trong khi vẫn giữ nguyên góc nhìn qua gương và giữ đúng chi tiết trang phục cô gái đang mặc. Tuyệt đối không được lỗi tay và không được lỗi chân. Lấy lại góc quay toàn cảnh gương mà không thêm bất kì chi tiết trang phục nào ngoài bức ảnh, tạo dáng tự nhiên trong khi cầm điện thoại, tay cầm điện thoại vẫn luôn che mặt cô gái, đầu cô gái hơi nghiêng nhẹ rồi mỉm cười rồi sau đó cô đứng về tư thế bình thường ngay lập tức, một tay còn lại của cô gái để khoanh tay trước ngực một cách cá tính khoảng 1.5 giây đồng thời lắc hông 1 nhịp, sau đó đưa tay chống vào hông, giữ nguyên tư thế này đến hết video, thêm một chút chuyển động chậm (slow motion) để tạo nét thanh lịch, tuyệt đối không thay đổi chi tiết trang phục. Tuyệt đối không làm thay đổi chi tiết trang phục như trong ảnh mẫu.
+                Chuyển động camera làm nổi bật tỷ lệ của bộ trang phục trong khi vẫn giữ nguyên góc nhìn qua gương và giữ đúng chi tiết trang phục cô gái đang mặc. Tuyệt đối không được lỗi tay và không được lỗi chân. Lấy lại góc quay toàn cảnh gương mà không thêm bất kì chi tiết trang phục nào ngoài bức ảnh, tạo dáng tự nhiên trong khi cầm điện thoại, tay cầm điện thoại vẫn luôn che mặt cô gái, đầu cô gái hơi nghiêng nhẹ rồi mỉm cười rồi sau đó cô đứng về tư thế bình thường ngay lập tức, một tay còn lại của cô gái để khoanh tay trước ngực một cách cá tính khoảng 1.5 giây, sau đó đưa tay chống vào hông, giữ nguyên tư thế này đến hết video, thêm một chút chuyển động chậm (slow motion) để tạo nét thanh lịch, tuyệt đối không thay đổi chi tiết trang phục. Tuyệt đối không làm thay đổi chi tiết trang phục như trong ảnh mẫu.
                 `;
     function splitPromptList(promptText) {
         return promptText
@@ -373,4 +373,5 @@
     document.body.appendChild(btn);
 
 })();
+
 
