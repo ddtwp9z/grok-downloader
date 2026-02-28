@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Grok - Thời trang
 // @namespace    https://github.com/ddtwp9z/grok-downloader
-// @version      1.0.2
+// @version      1.0.3
 // @description  Auto create multiple videos from one image, upscale to HD and auto rename by image filename
 // @match        https://grok.com/imagine*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=grok.com
@@ -78,14 +78,30 @@
 
 
     async function waitForPromptBox(timeout = 20000) {
+        console.log("waitForPromptBox");
         const start = Date.now();
+
         while (Date.now() - start < timeout) {
-            const el =
-                document.querySelector('textarea[aria-label="Tạo video"]') ||
-                document.querySelector('textarea[placeholder*="video"]');
-            if (el && el.offsetParent !== null) return el;
+
+            const editors = document.querySelectorAll(
+                'div[contenteditable="true"].ProseMirror'
+            );
+
+            for (const el of editors) {
+                const placeholder = el.querySelector('[data-placeholder]');
+                if (
+                    placeholder &&
+                    placeholder.getAttribute("data-placeholder")?.includes("Gõ để tưởng tượng") &&
+                    el.offsetParent !== null
+                ) {
+                    console.log("Tìm thấy prompt box");
+                    return el;
+                }
+            }
+
             await sleep(300);
         }
+        console.log("Không tìm thấy prompt box");
         return null;
     }
 
@@ -122,14 +138,18 @@
         if (!box) throw "Không tìm thấy prompt box";
 
         box.focus();
-        await sleep(80);
+        await sleep(100);
 
-        setNativeValue(box, "");
+        // Xóa nội dung cũ
+        box.innerHTML = "<p></p>";
         box.dispatchEvent(new Event("input", { bubbles: true }));
-        await sleep(80);
+        await sleep(100);
 
-        setNativeValue(box, promptText);
+        // Set nội dung mới
+        box.innerHTML = `<p>${promptText.replace(/\n/g, "<br>")}</p>`;
         box.dispatchEvent(new Event("input", { bubbles: true }));
+
+        await sleep(100);
     }
 
     async function clickCreateVideo() {
@@ -177,16 +197,19 @@
 
     async function waitTaskReady(timeout = 120000) {
         const start = Date.now();
-        while (Date.now() - start < timeout) {
-            const skipBtn = [...document.querySelectorAll("button")]
-                .find(b => b.textContent.trim() === "Bỏ qua");
 
-            if (skipBtn && skipBtn.offsetParent !== null) {
-                skipBtn.click();
+        while (Date.now() - start < timeout) {
+
+            // 1️⃣ Nếu còn trạng thái "Đang tạo" → tiếp tục chờ
+            const creating = [...document.querySelectorAll("span")]
+                .find(el => el.textContent?.trim() === "Đang tạo");
+
+            if (creating) {
                 await sleep(800);
                 continue;
             }
 
+            // 2️⃣ Khi không còn "Đang tạo" → tìm nút More
             const moreBtn = document.querySelector(
                 'button[aria-label="Tùy chọn khác"], button[aria-label="More"]'
             );
@@ -198,8 +221,10 @@
             ) {
                 return moreBtn;
             }
+
             await sleep(400);
         }
+
         throw "⏰ Timeout: video chưa ready";
     }
 
@@ -231,10 +256,23 @@
     }
 
     function getCurrentVideoUrl() {
-        const hdVideo = document.querySelector(
-            'video#hd-video[src]:not([style*="visibility: hidden"])'
-        );
-        return hdVideo?.src || null;
+
+        // 1️⃣ Ưu tiên đúng video HD
+        const hdVideo = document.querySelector('video#hd-video[src]');
+
+        if (hdVideo && hdVideo.src && hdVideo.src.includes("_hd.mp4")) {
+            return hdVideo.src.split("?")[0]; // bỏ query cache
+        }
+
+        // 2️⃣ Fallback: tìm bất kỳ video nào có _hd.mp4
+        const fallback = [...document.querySelectorAll("video[src]")]
+            .find(v => v.src.includes("_hd.mp4"));
+
+        if (fallback) {
+            return fallback.src.split("?")[0];
+        }
+
+        return null;
     }
 
     function downloadVideo(url, filename) {
@@ -262,6 +300,59 @@
             );
             input.click();
         });
+    }
+
+    // ===== NEW GROK UI FLOW =====
+    async function openSettingMenu(timeout = 15000) {
+        const start = Date.now();
+        while (Date.now() - start < timeout) {
+            const btn = document.querySelector('button[aria-label="Cài đặt"]');
+            if (btn && btn.offsetParent !== null) {
+                humanClick(btn);
+                await sleep(500);
+                return true;
+            }
+            await sleep(300);
+        }
+        throw "❌ Không tìm thấy nút Cài đặt";
+    }
+
+    async function waitForMenuOpen(timeout = 10000) {
+        const start = Date.now();
+        while (Date.now() - start < timeout) {
+            const menu = document.querySelector('div[role="menu"][data-state="open"]');
+            if (menu) return menu;
+            await sleep(300);
+        }
+        throw "❌ Menu không mở";
+    }
+
+    async function selectAspect916(menu) {
+        console.log("selectAspect916");
+        const btn = menu.querySelector('button[aria-label="9:16"]');
+        if (!btn) throw "❌ Không tìm thấy nút 9:16";
+        humanClick(btn);
+        await sleep(300);
+    }
+
+    async function clickCreateVideoInMenu(menu) {
+        console.log("clickCreateVideoInMenu");
+        const create = [...menu.querySelectorAll('[role="menuitem"]')]
+            .find(item =>
+                item.querySelector('span') &&
+                item.querySelector('span').textContent.trim().includes("Tạo video")
+            );
+
+        if (!create) throw "❌ Không tìm thấy menu Tạo video";
+        humanClick(create);
+        await sleep(800);
+    }
+
+    async function triggerCreateVideoFromImage() {
+        await openSettingMenu();
+        const menu = await waitForMenuOpen();
+        await selectAspect916(menu);
+        await clickCreateVideoInMenu(menu);
     }
 
     async function goBackToUpload() {
@@ -303,6 +394,9 @@
                 throw "❌ Upload thất bại sau 3 lần";
             }
 
+            await sleep(2000);
+            await triggerCreateVideoFromImage();
+
             // 3️⃣ fill prompt
             await fillPrompt(promptNow);
 
@@ -324,6 +418,7 @@
 
             // 7️⃣ download
             const videoUrl = getCurrentVideoUrl();
+            console.log("📝 URL:", videoUrl);
             if (videoUrl) {
                 const filename =
                     file.name.replace(/\.[^/.]+$/, `_${i + 1}.mp4`);
